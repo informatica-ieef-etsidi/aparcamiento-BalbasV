@@ -4,6 +4,8 @@ En este programa se realizara un sistema para administrar 2 plazas de garaje
 y ver de esta manera si estan libres, u ocupadas, y por quien
 */
 #include<stdio.h>
+#include<string.h>
+#define _CRT_SECURE_NO_WARNINGS
 
 int main() {
 
@@ -11,7 +13,9 @@ int main() {
 	int plaza2 = 0;			 //si plaza=0, plaza libre; si plaza=1, plaza ocupada
 	char elige;				 //variable para el switch
 	char matricula1[10];	 //matricula del coche de la plaza 1
-	char matricula2[10];	 //matricula del coche de la plaza 2
+	char matricula2[10];	//matricula del coche de la plaza 2
+	char buscar[10];		//variable para la opcion B
+	int busqueda1, busqueda2;			//variable para la opcion B
 	int retirar = 0;		 //se utilizara para ver que coche se quiere retirar
 
 	do {
@@ -20,7 +24,9 @@ int main() {
 		printf("Desde este menu se podra comprobar si queda alguna plaza libre para poder aparcar, y en caso contrario, \nver quien la ocupa: \n\n");
 		printf("Si desea aparcar su vehiculo -> A \n");
 		printf("Si desea retirar su vehiculo -> R \n");
+		printf("Si desea buscar un vehiculo por su maticula -> B\n");
 		printf("Si desea ver el estado del parking -> E \n");
+		printf("Si desea salir del parking -> S \n");
 		
 		scanf_s("%c", &elige);
 
@@ -54,7 +60,9 @@ int main() {
 			else {
 				printf("Lo sentimos, el parking esta lleno \n");
 			}
+
 			system("pause");
+
 			break;
 			 
 		case 'r':
@@ -118,6 +126,36 @@ int main() {
 			system("pause");
 			break;
 
+		case 'b':
+		case 'B':
+			printf("Introduce la matricula que quieras buscar: \n");
+			scanf_s("%S", buscar, 10);
+			busqueda1 = strcmp(buscar, matricula1);
+			busqueda2 = strcmp(buscar, matricula2);
+
+			if (busqueda1 == 0) {
+				printf("El vehiculo de la matricula introducida se encuentra en el parking, en la plaza 1 \n");
+			}
+			else if (busqueda2 == 0) {
+				printf("El vehiculo de la matricula introducida se encuentra en el parking, en la plaza 2 \n");
+			}
+			else {
+				printf("La matricula introducida no esta registrada en el parking en este momento \n");
+			}
+
+
+			system("pause");
+
+			break;
+
+		case 's':
+		case 'S':
+			printf("Ha pulsado salir\n");
+			system("pause");
+			exit(0); //con este comando, el programa deja de ejecutarse
+			break;
+
+
 		default:
 			printf("La opcion elegida no es valida");
 
@@ -125,6 +163,6 @@ int main() {
 		
 		system("cls");
 
-	} while (elige != 'x' || elige != 'X');
+	} while ((elige != 's') || (elige != 'S'));
 	system("pause");
 }
