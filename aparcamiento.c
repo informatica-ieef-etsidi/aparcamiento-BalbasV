@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 /*
 Desarollador: Victor Balbas
 En este programa se realizara un sistema para administrar 2 plazas de garaje
@@ -5,7 +6,7 @@ y ver de esta manera si estan libres, u ocupadas, y por quien
 */
 #include<stdio.h>
 #include<string.h>
-#define _CRT_SECURE_NO_WARNINGS
+
 
 int main() {
 
@@ -17,6 +18,43 @@ int main() {
 	char buscar[10];		//variable para la opcion B
 	int busqueda1, busqueda2;			//variable para la opcion B
 	int retirar = 0;		 //se utilizara para ver que coche se quiere retirar
+
+	//variables para el usuario y contraseña
+	char usuario[50] = "admin";
+	char usuario1[50];
+	char contrasena[50] = "12345";
+	char contrasena1[50];
+	int intentos = 1;
+	int orden, orden1;
+
+
+	do {
+		printf("Bienvenido al sistema de gestion de usuarios del parquing\n");
+		printf("Introduce el usuario: ");
+		scanf("%s", usuario1);
+		orden = strcmp(usuario, usuario1);
+		if (orden == 0) {
+			printf("Introduce la contrasena: ");
+			scanf("%s", contrasena1);
+			orden1 = strcmp(contrasena, contrasena1);
+			if (orden1 == 0) {
+				printf("Usuario y contraseña introducidos correctamente \n");
+				intentos = 3;
+				break;
+			}
+			else {
+				printf("introduce la contrasena correctamente \n");
+				intentos = intentos + 1;
+			}
+		}
+		else {
+			printf("Introduce el usuario correctamente: \n");
+			intentos = intentos + 1;
+
+		}
+
+
+	} while (intentos < 4);
 
 	do {
 
