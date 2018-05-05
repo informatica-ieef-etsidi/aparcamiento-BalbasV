@@ -1,35 +1,44 @@
 #define _CRT_SECURE_NO_WARNINGS
 /*
 Desarollador: Victor Balbas
-En este programa se realizara un sistema para administrar 2 plazas de garaje
+En este programa se realizara un sistema para administrar N plazas de garaje
 y ver de esta manera si estan libres, u ocupadas, y por quien
 */
 #include<stdio.h>
 #include<string.h>
 
+#define NPLAZAS 10
+
+
+struct plaza {
+	int plaza; //si plaza=0, plaza libre; si plaza=1, plaza ocupada
+	char matricula [10], matricula1[10];
+};
+
+
+
+
 
 int main() {
 
-	int plaza1 = 0;			 //variable para la ocupacion de las plazas
-	int plaza2 = 0;			 //si plaza=0, plaza libre; si plaza=1, plaza ocupada
-	char elige;				 //variable para el switch
-	char matricula1[10];	 //matricula del coche de la plaza 1
-	char matricula2[10];	//matricula del coche de la plaza 2
-	char buscar[10];		//variable para la opcion B
-	int busqueda1, busqueda2;			//variable para la opcion B
-	int retirar = 0;		 //se utilizara para ver que coche se quiere retirar
-
-	//variables para el usuario y contraseña
+	//variable para el registro de usuario
 	char usuario[50] = "admin";
 	char usuario1[50];
 	char contrasena[50] = "12345";
 	char contrasena1[50];
-	int intentos = 1;
+	int intentos = 0;
 	int orden, orden1;
 
+	//variable para el switch
+	char elige;
 
+	//variable para las plazas
+	struct plaza parking[NPLAZAS];
+	int i,j; //variables para bucles
+
+	//algoritmo para introducir usuario y contraseña
 	do {
-		printf("Bienvenido al sistema de gestion de usuarios del parquing\n");
+		printf("Bienvenido al sistema de gestion de usuarios del parking\n");
 		printf("Introduce el usuario: ");
 		scanf("%s", usuario1);
 		orden = strcmp(usuario, usuario1);
@@ -45,162 +54,181 @@ int main() {
 			else {
 				printf("introduce la contrasena correctamente \n");
 				intentos = intentos + 1;
+				printf("Llevas %d intentos \n", intentos);
+				if (intentos == 3) {
+					printf("Numero de intentos superados, el programa se detendra \n");
+					system("pause");
+					return;
+				}
 			}
 		}
 		else {
 			printf("Introduce el usuario correctamente: \n");
 			intentos = intentos + 1;
+			printf("Llevas %d intentos \n", intentos);
+			if (intentos == 3) {
+				printf("Numero de intentos superados, el programa se detendra \n");
+				system("pause");
+				return;
+			}
 
 		}
 
 
 	} while (intentos < 4);
 
+	system("cls");
+
+	// nos aseguramos que las plazas estan vacias antes de empezar el bucle del aparcamiento
+	for (i = 0; i <= NPLAZAS; i++) {
+		
+		parking[i].plaza = 0;
+		parking[i].matricula[10] = "NNNNLLL";
+		parking[i].matricula1[10] = "NNNNLLL";
+	}
+
+	
 	do {
 
 		printf("ASISTENTE DE APARCAMIENTO \n");
 		printf("Desde este menu se podra comprobar si queda alguna plaza libre para poder aparcar, y en caso contrario, \nver quien la ocupa: \n\n");
 		printf("Si desea aparcar su vehiculo -> A \n");
 		printf("Si desea retirar su vehiculo -> R \n");
-		printf("Si desea buscar un vehiculo por su maticula -> B\n");
+		printf("Si desea buscar un vehiculo por su maticula -> B \n");
 		printf("Si desea ver el estado del parking -> E \n");
 		printf("Si desea salir del parking -> S \n");
-		
-		scanf_s("%c", &elige);
+		getchar();
+		scanf("%c", &elige);
 
 		switch (elige) {
-		case 'a':
+	
 		case 'A':
-			if (plaza1 == 0 || plaza2 == 0) {
-					if (plaza1 == 0) {
-						printf("Hay sitio para aparcar, Introduzca su matricula: \n");
-						scanf_s("%S", matricula1, 10);
-						if (matricula1 != matricula2) {
-							plaza1 = 1;
+		case 'a':
+			for (i = 0; i <= NPLAZAS; i++) {
+				if (parking[i].plaza == 0) {
+					printf("Hay sitio para aparcar, Introduzca su matricula: \n");
+					getchar();
+					scanf("%S", parking[i].matricula);
+					for (j = 0; j <= NPLAZAS; j++) {
+						orden = strcmp(parking[i].matricula, parking[j].matricula);
+						if (orden == 0) {
+							parking[i].plaza = 1;
+							printf("Su vehiculo ha sido aparcado correctamente \n");
+							break;
 						}
 						else {
 							printf("La matricula introducida ya esta registrada, por favor, introduzca otra. Gracias \n");
 						}
 					}
-					else {
-						
-						printf("Hay sitio para aparcar, Introduzca su matricula: \n");
-						scanf_s("%S", matricula2, 10);
-						if (matricula1 != matricula2) {
-							plaza2 = 1;
-						}
-						else {
-							printf("La matricula introducida ya esta registrada, por favor, introduzca otra. Gracias \n");
-						}
-					}
-				
+					break;
+				}
+				else {
+					printf("El parking esta lleno, lo sentimos \n");
+				}
 			}
-			else {
-				printf("Lo sentimos, el parking esta lleno \n");
-			}
-
 			system("pause");
 
 			break;
-			 
+		case 'e':
+		case 'E': 
+			for (i = 0; i < NPLAZAS; i++) {
+				if (parking[i].plaza == 1) {
+					printf("Plaza %d ocupada: matricula -> %S \n", i+1, parking[i].matricula);
+				}
+				else {
+					printf("Plaza %d libre \n", i+1);
+				}
+			}
+			system("pause");
+			break;
+
 		case 'r':
 		case 'R':
-			if (plaza1 == 1 || plaza2 == 1) {
-				if (plaza1 == 1 && plaza2 == 0) {
-					printf("se retirara el vehiculo de la plaza 1, matricula: %S \n", matricula1);
-					plaza1 = 0;
+			system("cls");
+
+			//muestra todas las plazas, para saber cual elegir
+			for (i = 0; i <= NPLAZAS; i++) {
+				if (parking[i].plaza == 1) {
+					printf("Plaza %d ocupada: matricula -> %S \n", i, parking[i].matricula);
 				}
-				else if (plaza2 == 1 && plaza1 == 0) {
-					printf("se retirara el vehiculo de la plaza 2, matricula: %S \n", matricula2);
-					plaza2 = 0;
-				}
-				else if (plaza1 == 1 && plaza2 == 1) {
-					printf("Plaza 1 -> Ocupada, matricula: %S \n", matricula1);
-					printf("Plaza 2 -> Ocupada, matricula: %S \n", matricula2);
-					
-					printf("Introduzca la plaza del vehiculo que se desea retirar: \n");
-					scanf_s("%d", retirar, 10); //seguir aqui
-											// para compararlas matriculas, poner un getchar(), y asi borrar el \0
-
-					if (retirar == 1) {
-						printf("Se retirara el vehiculo de la plaza 1, matrucula: %S \n", matricula1);
-						plaza1 = 0;
-					}
-					else if (retirar == 2) {
-						printf("Se retirara el vehiculo de la plaza 2, matricula: %S \n", matricula2);
-					}
-					else {
-						printf("La matricula introducida no coincide con ningun coche aparcado \n");
-					}
-
-					
-
+				else {
+					printf("Plaza %d libre \n", i);
 				}
 			}
-			else {
-				printf("Lo sentimos, no hay ningun coche aparcado \n");
+			//vacia todas los parking[].matricula1
+			for (i = 0; i <= NPLAZAS; i++) {
+				parking[i].matricula1[10] = "NNNNLLL";
 			}
-			system("pause");
-			break;
+			//para retirar el vehiculo, la matricula introducida se guarda en el espacio 3 del parking[].matricula1
+			printf("Introduzca la matricula del coche que se desea retirar: \n");
+			getchar();
+			scanf("%S", parking[3].matricula1);
 
-		case 'e':
-		case 'E':
-			if (plaza1 == 0) {
-				printf("Plaza 1 -> Libre \n");
-			}
-			else {
-				printf("Plaza 1 -> Ocupada, matricula: %S \n", matricula1);
-			}
+			for (i = 0; i < NPLAZAS; i++) {
+				orden = strcmp(parking[i].matricula, parking[3].matricula1); //comparar dos cadenas (libreria string.h)
+				if (orden == 0) {
+					printf("Se retirara el coche de la plaza %d, matricula -> %S \n", i+1, parking[i].matricula);
+					parking[i].plaza = 0;
+				}
+				else {
+					if (parking[i].plaza == 1)
+						parking[i].plaza = 1;
+					else
+						parking[i].plaza = 0;
 
-			if (plaza2 == 0) {
-				printf("Plaza 2 -> Libre \n");
+				}
 			}
-			else {
-				printf("Plaza 2 -> Ocupada, matricula: %S \n", matricula2);
-			}
-
-			printf("Gracias por su visita al parking \n");
-
-			system("pause");
-			break;
-
-		case 'b':
-		case 'B':
-			printf("Introduce la matricula que quieras buscar: \n");
-			scanf_s("%S", buscar, 10);
-			busqueda1 = strcmp(buscar, matricula1);
-			busqueda2 = strcmp(buscar, matricula2);
-
-			if (busqueda1 == 0) {
-				printf("El vehiculo de la matricula introducida se encuentra en el parking, en la plaza 1 \n");
-			}
-			else if (busqueda2 == 0) {
-				printf("El vehiculo de la matricula introducida se encuentra en el parking, en la plaza 2 \n");
-			}
-			else {
-				printf("La matricula introducida no esta registrada en el parking en este momento \n");
-			}
-
 
 			system("pause");
-
 			break;
 
 		case 's':
 		case 'S':
 			printf("Ha pulsado salir\n");
 			system("pause");
-			exit(0); //con este comando, el programa deja de ejecutarse
+			exit(0); //para salir del programa
+			//con return; el proframa no funciona, sale cuadro de error
+
+		case 'B':
+		case 'b':
+			//vacia todas los parking[].matricula1
+			for (i = 0; i <= NPLAZAS; i++) {
+				parking[i].matricula1[10] = "NNNNLLL";
+			}
+
+			printf("Buscar coche aparcado por matricula: \n");
+			printf("Introduce una matricula, y se comprobara si esta aparcado en el parking o no \n");
+			getchar();
+			scanf("%S", parking[3].matricula1);
+
+			for (i = 0; i < NPLAZAS; i++) {
+				orden = strcmp(parking[i].matricula, parking[3].matricula1); //comparar dos cadenas (libreria string.h)
+				if (orden == 0) {
+					printf("El coche con matricula %S, se encuentra en la plaza %d \n", parking[i].matricula, i + 1);
+					
+				}
+				else {
+					//printf("La matricula introducida no corresponde a ningun coche del parking \n");
+				}
+			}
 			break;
 
 
+		
+
 		default:
-			printf("La opcion elegida no es valida");
+			printf("La opcion elegida no es valida, Intentelo de nuevo");
+			system("pause");
 
 		}
-		
+
 		system("cls");
 
-	} while ((elige != 's') || (elige != 'S'));
+	}while (elige != 1);
+
+
+	
+
 	system("pause");
+
 }
